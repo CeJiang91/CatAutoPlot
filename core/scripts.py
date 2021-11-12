@@ -25,6 +25,8 @@ def log2eqpha(cfg=Config()):
     eq_root = cfg.eq_root
     ai_catalog = cfg.ai_catalog
     man_catalog = cfg.man_catalog
+    if not os.path.isdir(eq_root):
+        os.makedirs(eq_root)
     aieqpha = readaieqpha(os.path.join(eq_root, ai_catalog))
     aieqpha = slice_ctlgv2(cfg, aieqpha)  #fan
     wisoeqpha(aieqpha, os.path.join(eq_root, 'aieqpha.dat'))
@@ -141,6 +143,8 @@ def location_cmp(cfg=Config()):
     frame.axes.get_xaxis().set_visible(True)
     plt.xlabel('Longitude', fontdict={'family': 'Nimbus Roman', 'weight': 'normal', 'size': 15})
     plt.ylabel('Latitude', fontdict={'family': 'Nimbus Roman', 'weight': 'normal', 'size': 15})
+    if not os.path.isdir(cfg.plot_root):
+        os.makedirs(cfg.plot_root)
     fig.savefig(os.path.join(cfg.plot_root, 'loc_lon_lat.png'), format='png')
     plt.close()
     mandepth = maneqs['dep'].astype(np.float)
