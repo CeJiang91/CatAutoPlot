@@ -10,6 +10,8 @@ class Config(object):
         self.plot_root = './image'
         self.lat_range = [25.50, 25.80]
         self.lon_range = [99.80, 100.05]
+        # Boundary could be 'city','county','province' and 'N'
+        self.boundary = 'N'
         self.time_range = ['20211030T000000.001', '20211031T000000.001']
         self.main_eq_starttime = '20211030T000000.001'
         # If there is no main earthquake , you can set 'self.main_eq_starttime = self.time_range[0]'
@@ -79,6 +81,8 @@ class Config_SC2(object):
         self.lat_range = [26, 34]
         self.lon_range = [97, 107]
         self.time_range = ['20210609T000000.001', '20210613T000000.001']
+        # Boundary could be 'city','county','province' and 'N'
+        self.boundary = 'province'
         self.main_eq_starttime = self.time_range[0]
         # If there is no main earthquake , you can set 'self.main_eq_starttime = self.time_range[0]'
         self.plot_lat = [26, 34]

@@ -28,10 +28,10 @@ def log2eqpha(cfg=Config()):
     if not os.path.isdir(eq_root):
         os.makedirs(eq_root)
     aieqpha = readaieqpha(os.path.join(eq_root, ai_catalog))
-    aieqpha = slice_ctlgv2(cfg, aieqpha)  #fan
+    aieqpha = slice_ctlgv2(cfg, aieqpha)  # fan
     wisoeqpha(aieqpha, os.path.join(eq_root, 'aieqpha.dat'))
     _, maneqpha = readjopenseqpha(os.path.join(eq_root, man_catalog))
-    maneqpha = slice_ctlgv2(cfg, maneqpha) #fan
+    maneqpha = slice_ctlgv2(cfg, maneqpha)  # fan
     wisoeqpha(maneqpha, os.path.join(eq_root, 'maneqpha.dat'))
     with open(os.path.join(eq_root, 'aieqs.lst'), mode='w') as f:
         [f.write(" ".join(r.split('_')) + '\n') for r in aieqpha.keys()]
@@ -121,10 +121,12 @@ def location_cmp(cfg=Config()):
     ax = plt.axes(projection=ccrs.PlateCarree())
     proj = ccrs.PlateCarree()
     ax.set_extent([cfg.plot_lon[0], cfg.plot_lon[1], cfg.plot_lat[0], cfg.plot_lat[1]], ccrs.Geodetic())
-    states_shp = os.path.join(cfg.eq_root, 'shp/county')
-    for state in shpreader.Reader(states_shp).geometries():
-        edgecolor = 'black'
-        ax.add_geometries([state], ccrs.PlateCarree(), facecolor='none', edgecolor=edgecolor)
+    boundary = cfg.boundary
+    if boundary != 'N':
+        states_shp = os.path.join(cfg.eq_root, f'shp/{boundary}')
+        for state in shpreader.Reader(states_shp).geometries():
+            edgecolor = 'black'
+            ax.add_geometries([state], ccrs.PlateCarree(), facecolor='none', edgecolor=edgecolor)
     ax.imshow(
         imread(os.path.join(cfg.eq_root, 'NE1_50M_SR_W.tif')),
         origin='upper', transform=proj,
@@ -155,7 +157,7 @@ def location_cmp(cfg=Config()):
     frame.invert_yaxis()
     plt.scatter(ailon, aidepth, c='navy', marker='o', s=0.5)
     plt.scatter(manlon, mandepth, c='r', marker='o', s=0.5)
-    plt.ylim([30,0])
+    plt.ylim([30, 0])
     plt.xlabel('Longitude', fontdict={'family': 'Nimbus Roman',
                                       'weight': 'normal', 'size': 12})
     plt.ylabel('Depth', fontdict={'family': 'Nimbus Roman', 'weight': 'normal', 'size': 12})
@@ -167,7 +169,7 @@ def location_cmp(cfg=Config()):
     frame.invert_yaxis()
     plt.scatter(ailat, aidepth, c='navy', marker='o', s=0.5)
     plt.scatter(manlat, mandepth, c='r', marker='o', s=0.5)
-    plt.ylim([30,0])
+    plt.ylim([30, 0])
     plt.xlabel('Latitude', fontdict={'family': 'Nimbus Roman',
                                      'weight': 'normal', 'size': 12})
     plt.ylabel('Depth', fontdict={'family': 'Nimbus Roman', 'weight': 'normal', 'size': 12})
@@ -205,11 +207,13 @@ def factor_cmp(cfg=Config()):
     axs[0, 1].hist(dists, edgecolor='black', bins=np.arange(0.0, max(dists), 1))
     axs[0, 1].set_title('Distance between epicenters')
     axs[0, 1].set_xlabel('$Distance (km)$')
-    axs[0, 1].set_xlim(right=max(dists)+0.25)
-    axs[1, 0].hist(aieqs.locdep - maneqs.locdep, edgecolor='black', bins=np.arange((aieqs.locdep - maneqs.locdep).min()-1.0, (aieqs.locdep - maneqs.locdep).max()+1.0, 1.0))
+    axs[0, 1].set_xlim(right=max(dists) + 0.25)
+    axs[1, 0].hist(aieqs.locdep - maneqs.locdep, edgecolor='black',
+                   bins=np.arange((aieqs.locdep - maneqs.locdep).min() - 1.0,
+                                  (aieqs.locdep - maneqs.locdep).max() + 1.0, 1.0))
     axs[1, 0].set_title(r'Depth differences')
     axs[1, 0].set_xlabel(r'$Dep_{AI}-Dep_{Man}(km)$')
-    axs[1, 0].set_xlim((aieqs.locdep - maneqs.locdep).min()-1.0, (aieqs.locdep - maneqs.locdep).max()+1.0)
+    axs[1, 0].set_xlim((aieqs.locdep - maneqs.locdep).min() - 1.0, (aieqs.locdep - maneqs.locdep).max() + 1.0)
     axs[1, 1].hist(aieqs.mag[aieqs.mag > -10.0] - maneqs.mag[aieqs.mag > -10.0], edgecolor='black',
                    bins=np.arange(-1.0, 1.0, 0.1))
     axs[1, 1].set_title('Magnitude differences')
@@ -373,7 +377,7 @@ def plot_MT(cfg=Config()):
     """
     print('plot MT')
     maineqtime = cfg.main_eq_starttime
-    with open(os.path.join(cfg.eq_root,'maneqs.lst')) as f:
+    with open(os.path.join(cfg.eq_root, 'maneqs.lst')) as f:
         lines = f.readlines()
     oklines = []
     for r in lines:
@@ -388,7 +392,7 @@ def plot_MT(cfg=Config()):
     manmags = omags[omags >= -3.0]
     mantimes = otimes[omags >= -3.0]
 
-    with open(os.path.join(cfg.eq_root,'aieqs.lst')) as f:
+    with open(os.path.join(cfg.eq_root, 'aieqs.lst')) as f:
         lines = f.readlines()
     oklines = []
     for r in lines:
@@ -413,7 +417,7 @@ def plot_MT(cfg=Config()):
     etimedt_hour = math.floor(
         ((pd.to_datetime(config.time_range[1]) - pd.to_datetime(maineqtime)) / np.timedelta64(1, 's')) / 3600) + 1
 
-    fig, axs = plt.subplots(2, 1, sharex=True, figsize=(12, 5),dpi=200)
+    fig, axs = plt.subplots(2, 1, sharex=True, figsize=(12, 5), dpi=200)
     fig.subplots_adjust(hspace=0)
     axs[0].scatter(aitimes, aimags, s=3.0, marker='.', label='AI')
     axs[0].scatter(mantimes, manmags, s=3.0, marker='.', label='man')
@@ -448,7 +452,7 @@ def plot_MT(cfg=Config()):
     axs[1].xaxis.grid(True, which='major')
     axs[1].yaxis.grid(True, which='major')
     axs[0].xaxis.grid(True, which='major')
-    plt.savefig(os.path.join(cfg.plot_root,'mt.png'), format='png', bbox_inches='tight')
+    plt.savefig(os.path.join(cfg.plot_root, 'mt.png'), format='png', bbox_inches='tight')
     plt.close()
 
 
@@ -458,4 +462,3 @@ def traveltime_cmp(config=Config()):
 
 def eqdensity_cmp(config=Config()):
     print('eqdensity_cmp')
-
