@@ -8,15 +8,15 @@ class Config(object):
         self.man_catalog = 'YN-man-1030.txt'
         self.eq_root = './data'
         self.plot_root = './image'
-        self.lat_range = [25.50, 25.80]
-        self.lon_range = [99.80, 100.05]
+        self.lat_range = [21, 30]
+        self.lon_range = [95, 108]
         # Boundary could be 'city','county','province' and 'N'
-        self.boundary = 'N'
+        self.boundary = 'province'
         self.time_range = ['20211030T000000.001', '20211031T000000.001']
         self.main_eq_starttime = '20211030T000000.001'
         # If there is no main earthquake , you can set 'self.main_eq_starttime = self.time_range[0]'
-        self.plot_lat = [25.5, 25.76]
-        self.plot_lon = [99.7, 100.22]
+        self.plot_lat = [21, 30]
+        self.plot_lon = [95, 108]
         self.ground_truth = 0.5
         self.cpu_cores = 120
 

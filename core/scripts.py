@@ -127,19 +127,19 @@ def location_cmp(cfg=Config()):
         for state in shpreader.Reader(states_shp).geometries():
             edgecolor = 'black'
             ax.add_geometries([state], ccrs.PlateCarree(), facecolor='none', edgecolor=edgecolor)
-    ax.imshow(
-        imread(os.path.join(cfg.eq_root, 'NE1_50M_SR_W.tif')),
-        origin='upper', transform=proj,
-        extent=[-180, 180, -90, 90]
-    )
+    # ax.imshow(
+    #     imread(os.path.join(cfg.eq_root, 'NE1_50M_SR_W.tif')),
+    #     origin='upper', transform=proj,
+    #     extent=[-180, 180, -90, 90]
+    # )
     maneqs = readeq(os.path.join(cfg.eq_root, 'maneqs.lst'))
     aieqs = readeq(os.path.join(cfg.eq_root, 'aieqs.lst'))
     manlat = maneqs['lat'].astype(np.float)
     manlon = maneqs['lon'].astype(np.float)
     ailat = aieqs['lat'].astype(np.float)
     ailon = aieqs['lon'].astype(np.float)
-    plt.scatter(ailon, ailat, c='navy', marker='o', s=0.5)
-    plt.scatter(manlon, manlat, c='r', marker='o', s=0.5)
+    plt.scatter(ailon, ailat, c='navy', edgecolors='k',marker='o', s=5,linewidths=0.2)
+    plt.scatter(manlon, manlat, c='r',  edgecolors='k',marker='o', s=5,linewidths=0.2)
     frame = plt.gca()  #
     frame.axes.get_yaxis().set_visible(True)
     frame.axes.get_xaxis().set_visible(True)
@@ -155,8 +155,8 @@ def location_cmp(cfg=Config()):
     plt.rc('font', family='Nimbus Roman')
     frame = plt.gca()
     frame.invert_yaxis()
-    plt.scatter(ailon, aidepth, c='navy', marker='o', s=0.5)
-    plt.scatter(manlon, mandepth, c='r', marker='o', s=0.5)
+    plt.scatter(ailon, aidepth,  c='navy', edgecolors='k',marker='o', s=5,linewidths=0.2)
+    plt.scatter(manlon, mandepth, c='r', edgecolors='k',marker='o', s=5,linewidths=0.2)
     plt.ylim([30, 0])
     plt.xlabel('Longitude', fontdict={'family': 'Nimbus Roman',
                                       'weight': 'normal', 'size': 12})
@@ -167,8 +167,8 @@ def location_cmp(cfg=Config()):
     plt.rc('font', family='Nimbus Roman')
     frame = plt.gca()
     frame.invert_yaxis()
-    plt.scatter(ailat, aidepth, c='navy', marker='o', s=0.5)
-    plt.scatter(manlat, mandepth, c='r', marker='o', s=0.5)
+    plt.scatter(ailat, aidepth,  c='navy', edgecolors='k',marker='o', s=5,linewidths=0.2)
+    plt.scatter(manlat, mandepth, c='r', edgecolors='k',marker='o', s=5,linewidths=0.2)
     plt.ylim([30, 0])
     plt.xlabel('Latitude', fontdict={'family': 'Nimbus Roman',
                                      'weight': 'normal', 'size': 12})
@@ -418,6 +418,7 @@ def plot_MT(cfg=Config()):
         ((pd.to_datetime(config.time_range[1]) - pd.to_datetime(maineqtime)) / np.timedelta64(1, 's')) / 3600) + 1
 
     fig, axs = plt.subplots(2, 1, sharex=True, figsize=(12, 5), dpi=200)
+    axs[0].set_title(f"{UTCDateTime(cfg.time_range[0]).strftime('%Y-%m-%d')} to {UTCDateTime(cfg.time_range[1]).strftime('%Y-%m-%d')}")
     fig.subplots_adjust(hspace=0)
     axs[0].scatter(aitimes, aimags, s=3.0, marker='.', label='AI')
     axs[0].scatter(mantimes, manmags, s=3.0, marker='.', label='man')
@@ -441,10 +442,13 @@ def plot_MT(cfg=Config()):
     axs[1].axvline(color='red', linewidth=1.0)
     axs[1].set_ylabel('Cumulative number')
     axs[1].legend(loc='upper left')
-    xlabels = ["{:} days".format(r) for r in range(otimedt_day, 0, 1)] + \
-              [UTCDateTime(maineqtime).strftime('%m-%d/%H:%M')] + \
-              ["{:} days".format(r) for r in range(1, etimedt_day, 1)]
-    plt.xticks([r * 86400 for r in range(otimedt_day, etimedt_day, 1)], xlabels, rotation=45)
+    # etimedt_day=30
+    Pic_magnification= round(etimedt_day/8)
+    # xlabels = ["{:} days".format(r) for r in range(otimedt_day, 0, 1)] + \
+    #           [UTCDateTime(maineqtime).strftime('%m-%d/%H:%M')] + \
+    #           ["{:} days".format(r-Pic_magnification) for r in range(1, etimedt_day, Pic_magnification)]
+    xlabels = ["{:} days".format(r) for r in range(otimedt_day, etimedt_day, Pic_magnification)]
+    plt.xticks([r * 86400 for r in range(otimedt_day, etimedt_day, Pic_magnification)], xlabels, rotation=45)
     axs[1].set_xticks([r * 3600 for r in range(math.floor(otimedt_hour), math.floor(etimedt_hour), 2)], minor=True)
     axs[0].set_xticks([r * 3600 for r in range(math.floor(otimedt_hour), math.floor(etimedt_hour), 2)], minor=True)
     axs[0].tick_params(axis='x', which='major', color='red')
