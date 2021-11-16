@@ -276,6 +276,12 @@ def indicator_cmp(cfg=Config()):
     eq_recall = aicat.__len__() / man_all.__len__()
     eq_precision = aicat.__len__() / ai_all.__len__()
     eq_f1 = 2 * (eq_precision * eq_recall) / (eq_recall + eq_precision)
+    with open(os.path.join(cfg.plot_root, 'indicator_report.txt'), 'w') as the_file:
+        the_file.write(f"Earthquake-------------------------------\n")
+        the_file.write(f"recall = {'%5.3f' % eq_recall}, precision = {'%5.3f' % eq_precision}, "
+                       f"f1_score = {'%5.3f' % eq_f1} \n")
+        the_file.write(f"man earthquake = {'%5d' % man_all.__len__()}, ai earthquake = {'%5d' % ai_all.__len__()}, "
+                       f"TP = {'%5d' % aicat.__len__()} \n")
     # -------------------
     aicatphas = []
     with open(os.path.join(cfg.eq_root, 'cmp_results', 'man_catai.dat')) as f:
@@ -302,13 +308,13 @@ def indicator_cmp(cfg=Config()):
     manphasdf = pd.DataFrame(manphas, columns=['netstn', 'phaname', 'timestr'])
     manphasdf['phatime'] = pd.to_datetime(manphasdf['timestr'])
     p = multiprocessing.Pool(cfg.cpu_cores)
-    results_Pg = p.map(partial(arrival_difference, aipha=aicatphasdf[aicatphasdf.phaname == 'Pg']['phatime']),
-                       manphasdf[manphasdf.phaname == 'Pg']['phatime'])
+    results_Pg = p.map(partial(arrival_difference, aipha=aicatphasdf[aicatphasdf.phaname == 'P']['phatime']),
+                       manphasdf[manphasdf.phaname == 'P']['phatime'])
     difftimes_Pg = []
     for rr in list(filter(None.__ne__, results_Pg)):
         difftimes_Pg.append(rr)
-    results_Sg = p.map(partial(arrival_difference, aipha=aicatphasdf[aicatphasdf.phaname == 'Sg']['phatime']),
-                       manphasdf[manphasdf.phaname == 'Sg']['phatime'])
+    results_Sg = p.map(partial(arrival_difference, aipha=aicatphasdf[aicatphasdf.phaname == 'S']['phatime']),
+                       manphasdf[manphasdf.phaname == 'S']['phatime'])
     difftimes_Sg = []
     for rr in list(filter(None.__ne__, results_Sg)):
         difftimes_Sg.append(rr)
@@ -317,28 +323,23 @@ def indicator_cmp(cfg=Config()):
     ground_truth = cfg.ground_truth
     difftimes_Pg = np.array(difftimes_Pg)
     Pg_diff = difftimes_Pg[difftimes_Pg <= ground_truth]
-    Pg_recall = Pg_diff.shape[0] / manphasdf[manphasdf.phaname == 'Pg']['phatime'].__len__()
-    Pg_precision = Pg_diff.shape[0] / aiallphasdf[aiallphasdf.phaname == 'Pg'].shape[0]
+    Pg_recall = Pg_diff.shape[0] / manphasdf[manphasdf.phaname == 'P']['phatime'].__len__()
+    Pg_precision = Pg_diff.shape[0] / aiallphasdf[aiallphasdf.phaname == 'P'].shape[0]
     Pg_f1 = 2 * (Pg_precision * Pg_recall) / (Pg_precision + Pg_recall)
     difftimes_Sg = np.array(difftimes_Sg)
     Sg_diff = difftimes_Sg[difftimes_Sg <= ground_truth]
-    Sg_recall = Sg_diff.shape[0] / manphasdf[manphasdf.phaname == 'Sg']['phatime'].__len__()
-    Sg_precision = Sg_diff.shape[0] / aiallphasdf[aiallphasdf.phaname == 'Sg'].shape[0]
+    Sg_recall = Sg_diff.shape[0] / manphasdf[manphasdf.phaname == 'S']['phatime'].__len__()
+    Sg_precision = Sg_diff.shape[0] / aiallphasdf[aiallphasdf.phaname == 'S'].shape[0]
     Sg_f1 = 2 * (Sg_precision * Sg_recall) / (Sg_precision + Sg_recall)
-    with open(os.path.join(cfg.plot_root, 'indicator_report.txt'), 'w') as the_file:
-        the_file.write(f"Earthquake-------------------------------\n")
-        the_file.write(f"recall = {'%5.3f' % eq_recall}, precision = {'%5.3f' % eq_precision}, "
-                       f"f1_score = {'%5.3f' % eq_f1} \n")
-        the_file.write(f"man earthquake = {'%5d' % man_all.__len__()}, ai earthquake = {'%5d' % ai_all.__len__()}, "
-                       f"TP = {'%5d' % aicat.__len__()} \n")
+    with open(os.path.join(cfg.plot_root, 'indicator_report.txt'), 'a') as the_file:
         the_file.write(f'Phase------------------------------------\n')
-        the_file.write(f"Pg: recall = {'%5.3f' % Pg_recall}, precision = {'%5.3f' % Pg_precision}, "
+        the_file.write(f"P: recall = {'%5.3f' % Pg_recall}, precision = {'%5.3f' % Pg_precision}, "
                        f"f1_score = {'%5.3f' % Pg_f1}\n")
-        the_file.write(f"Pg: std = {'%5.3f' % np.std(Pg_diff)} var = {'%5.3f' % np.var(Pg_diff)}, "
+        the_file.write(f"P: std = {'%5.3f' % np.std(Pg_diff)} var = {'%5.3f' % np.var(Pg_diff)}, "
                        f"mean/abs = {'%5.3f' % np.mean(np.abs(Pg_diff))} mean = {'%5.3f' % np.mean(Pg_diff)}\n")
-        the_file.write(f"Sg: recall = {'%5.3f' % Sg_recall}, precision = {'%5.3f' % Sg_precision},"
+        the_file.write(f"S: recall = {'%5.3f' % Sg_recall}, precision = {'%5.3f' % Sg_precision},"
                        f" f1_score = {'%5.3f' % Sg_f1}\n")
-        the_file.write(f"Sg: std = {'%5.3f' % np.std(Sg_diff)} var = {'%5.3f' % np.var(Sg_diff)}, "
+        the_file.write(f"S: std = {'%5.3f' % np.std(Sg_diff)} var = {'%5.3f' % np.var(Sg_diff)}, "
                        f"mean/abs = {'%5.3f' % np.mean(np.abs(Sg_diff))} mean = {'%5.3f' % np.mean(Sg_diff)}\n")
 
 

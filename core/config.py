@@ -40,13 +40,14 @@ class Config_SC(object):
 
 class Config_FJ(object):
     def __init__(self):
-        self.ai_catalog = 'Associate_All_FJ_2021_0101_0131.txt'
-        self.man_catalog = 'BulletinPrint_All_FJ_2021_0101_0131.txt'
+        self.ai_catalog = 'FJ_AI2.txt'
+        self.man_catalog = 'FJ_man2.txt'
         self.eq_root = './data'
         self.plot_root = './image'
         self.lat_range = [21, 27]
         self.lon_range = [114, 122]
-        self.time_range = ['20210101T000000.001', '20210201T000000.001']
+        self.boundary = 'province'
+        self.time_range = ['20201211T000000.001', '20210206T000000.001']
         self.main_eq_starttime = self.time_range[0]
         # If there is no main earthquake , you can set 'self.main_eq_starttime = self.time_range[0]'
         self.plot_lat = [21, 27]

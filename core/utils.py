@@ -102,10 +102,6 @@ def readjopenseqpha(eqphasf):
                 try:
                     if line[29:30] == 'V':
                         phaname = line[17:25].rstrip()
-                        if phaname in ['Pg','Pb','Pn','P']:
-                            phaname='P'
-                        elif phaname in ['Sg','Sb','Sn','S']:
-                            phaname='S'
                         # phaname = line[17]
                         if UTCDateTime(eqymd + 'T' + line[32:43]) - UTCDateTime(eqtime) > 0.0:
                             phatime = UTCDateTime(eqymd + 'T' + line[32:43]).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
@@ -116,6 +112,10 @@ def readjopenseqpha(eqphasf):
                                 '%Y-%m-%dT%H:%M:%S.%f')[:-3]
                     else:
                         continue
+                    if phaname in ['Pg','Pb','Pn','P']:
+                        phaname='P'
+                    elif phaname in ['Sg','Sb','Sn','S']:
+                        phaname='S'
                     oeqphas[key].append([netstn, phaname, phatime])
                 except Exception:
                     continue
@@ -133,6 +133,10 @@ def readjopenseqpha(eqphasf):
                                 '%Y-%m-%dT%H:%M:%S.%f')[:-3]
                     else:
                         continue
+                    if phaname in ['Pg','Pb','Pn','P']:
+                        phaname='P'
+                    elif phaname in ['Sg','Sb','Sn','S']:
+                        phaname='S'
                     oeqphas[key].append([netstn, phaname, phatime])
                 except Exception:
                     continue
@@ -169,9 +173,13 @@ def readaieqpha(aieqphaf):
             # if match is not None:
             if 'NULL' in line:
                 netstn = sline[0].split('/')[0] + '.' + sline[0].split('/')[1]
-                print(sline[3])
+                phaname = sline[3]
+                if phaname in ['Pg','Pb','Pn','P']:
+                    phaname='P'
+                elif phaname in ['Sg','Sb','Sn','S']:
+                    phaname='S'
                 eqphas[eqid].append(
-                    [netstn, sline[3],
+                    [netstn, phaname,
                      UTCDateTime(sline[4] + 'T' + sline[5]).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]])
     # with open('Associate_ALL_YnYb_0501_0601.log.isoformat', encoding='utf-8', mode='w') as f:
     #     for key in eqphas.keys():
