@@ -1,4 +1,4 @@
-from core.config import Config as Config
+from core.config import Config_SC2 as Config
 from core.utils import readisoeqpha, cmpeqpha, wisoeqpha, readaieqpha, readjopenseqpha, \
     slice_ctlgv2, readeq, arrival_difference
 import os
@@ -443,7 +443,7 @@ def plot_MT(cfg=Config()):
     axs[1].set_ylabel('Cumulative number')
     axs[1].legend(loc='upper left')
     # etimedt_day=30
-    Pic_magnification= round(etimedt_day/8)
+    Pic_magnification= etimedt_day//8 +1
     # xlabels = ["{:} days".format(r) for r in range(otimedt_day, 0, 1)] + \
     #           [UTCDateTime(maineqtime).strftime('%m-%d/%H:%M')] + \
     #           ["{:} days".format(r-Pic_magnification) for r in range(1, etimedt_day, Pic_magnification)]
