@@ -1,4 +1,4 @@
-from core.config import Config_SC2 as Config
+from core.config import Config as Config
 from core.utils import readisoeqpha, cmpeqpha, wisoeqpha, readaieqpha, readjopenseqpha, \
     slice_ctlgv2, readeq, arrival_difference
 import os
