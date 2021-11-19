@@ -1,7 +1,3 @@
-import os
-import numpy as np
-
-
 class Config(object):
     def __init__(self):
         self.ai_catalog = 'YN_ai_1030.txt'
@@ -61,6 +57,7 @@ class Config_QH(object):
         self.man_catalog = 'QH_man.txt'
         self.eq_root = './data'
         self.plot_root = './image'
+        self.boundary = 'province'
         self.lat_range = [31.7, 39.4]
         self.lon_range = [89, 104]
         self.time_range = ['20210801T000000.001', '20210901T000000.001']
@@ -88,5 +85,24 @@ class Config_SC2(object):
         # If there is no main earthquake , you can set 'self.main_eq_starttime = self.time_range[0]'
         self.plot_lat = [26, 34]
         self.plot_lon = [97, 107]
+        self.ground_truth = 0.5
+        self.cpu_cores = 120
+
+
+class Config_XJ(object):
+    def __init__(self):
+        self.ai_catalog = 'XJ_AI.log'
+        self.man_catalog = 'XJ_man.txt'
+        self.eq_root = './data'
+        self.plot_root = './image'
+        self.lat_range = [35.5, 36.5]
+        self.lon_range = [82.2, 83]
+        # Boundary could be 'city','county','province' and 'N'
+        self.boundary = 'province'
+        self.time_range = ['20140212T170000.001', '20140213T180000.001']
+        self.main_eq_starttime = '20140212T73609.001'
+        # If there is no main earthquake , you can set 'self.main_eq_starttime = self.time_range[0]'
+        self.plot_lat = [35, 37]
+        self.plot_lon = [82, 83]
         self.ground_truth = 0.5
         self.cpu_cores = 120

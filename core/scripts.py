@@ -222,6 +222,19 @@ def factor_cmp(cfg=Config()):
     plt.savefig(os.path.join(cfg.plot_root, 'diff.png'), format='png')
     plt.close()
 
+    mannocateqs = pd.read_csv(os.path.join(cfg.eq_root, 'cmp_results/man_nocateq.dat'), sep='\s+', header=None,
+                         names=['tmp', 'timestr', 'loclat', 'loclong', 'locdep', 'mag'],
+                         dtype={'loclat': 'float64', 'loclong': 'float64', 'locdep': 'float64', 'mag': 'float64'})
+    mannocateqs['eqtime'] = pd.to_datetime(mannocateqs['timestr'])
+    fig = plt.figure(dpi=600, figsize=[7, 5])
+    plt.hist(mannocateqs.mag[mannocateqs.mag > -10.0], edgecolor='black',
+                   bins=np.arange(-1.0, 5, 0.2))
+    plt.title('The magnitude of undetected earthquakes ')
+    plt.xlabel(r'$M_{L}\_Man$')
+    plt.ylabel(r'$Cumulative$ $number$')
+    plt.xlim(-1, 5)
+    plt.savefig(os.path.join(cfg.plot_root, 'Mag_mannocat.png'), format='png')
+    plt.close()
 
 def pha_cmp(cfg=Config()):
     print('pha_cmp')
